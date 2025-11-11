@@ -36,18 +36,20 @@ export const TextProgressBar = ({
       </h1>
 
       <div
-        className="relative bg-black/20 shadow rounded-full 4k:mt-1"
+        className="relative bg-black/30 shadow 4k:mt-1"
         style={{
           width: '80%',
-          height: '0.21875rem'
+          height: '0.3em',
+          borderRadius: '2px'
         }}
       >
         <div
-          className={`absolute max-w-full transition-all rounded-full shadow left-0 h-full z-20`}
+          className={`absolute max-w-full transition-all shadow left-0 h-full z-20`}
           style={{
             width: `${value}%`,
             backgroundColor: getColor,
-            boxShadow: value <= 20 ? '0 0 0.625rem #f70101' : value <= 50 ? '0 0 0.625rem #f7e300' : `0 0 0.625rem var(--carhud-color)`
+            boxShadow: value <= 20 ? '0 0 0.3em #f70101' : value <= 50 ? '0 0 0.3em #f7e300' : `0 0 0.3em var(--carhud-color)`,
+            borderRadius: '2px'
           }}
         ></div>
       </div>

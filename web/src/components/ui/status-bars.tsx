@@ -45,13 +45,14 @@ export const StatBar = ({
       <div
         className={`relative ${
           vertical
-            ? "h-full 2k:w-[0.375em] 4k:w-[0.5em] rounded-full"
-            : "w-full 2k:h-3"
-        } bg-black/30  rounded-[1px]`}
+            ? "h-full 2k:w-[0.35em] 4k:w-[0.45em]"
+            : "w-full 2k:h-2.5"
+        } bg-black/30`}
         style={{
           width: vertical ? '0.25em' : undefined,
           marginLeft: vertical ? undefined : '0.25em',
-          height: vertical ? undefined : '0.5em',
+          height: vertical ? undefined : '0.4em',
+          borderRadius: '2px',
         }}
       >
         <div
@@ -61,8 +62,8 @@ export const StatBar = ({
           style={{
             backgroundColor: primaryColor,
             [vertical ? "height" : "width"]: `${percentage}%`,
-            boxShadow: settings.enableGlowEffect ? `0 0 0.5em ${primaryColor}` : 'none',
-            borderRadius: '0.1875em',
+            boxShadow: settings.enableGlowEffect ? `0 0 0.3em ${primaryColor}` : 'none',
+            borderRadius: '2px',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         />
@@ -115,19 +116,19 @@ export const StatBarSegmented = ({
       >
         {value}
       </p>
-      <div className="relative flex w-full 2k:h-[0.625em] rounded-[1px]" style={{ gap: '0.1875em', marginLeft: '0.25em', height: '0.375em' }}>
+      <div className="relative flex w-full 2k:h-[0.5em]" style={{ gap: '0.1875em', marginLeft: '0.25em', height: '0.4em', borderRadius: '2px' }}>
         {segmentFills.map((fill, index) => (
           <svg
             key={index}
             width="100%"
             height="100%"
-            className={"rounded-full "}
             viewBox="0 0 100 24"
             preserveAspectRatio="none"
+            style={{ borderRadius: '2px' }}
           >
             <defs>
               <filter id={`glow-${index}`}>
-                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
                 <feMerge>
                   <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="SourceGraphic"/>
@@ -140,6 +141,7 @@ export const StatBarSegmented = ({
               width="100"
               height="24"
               className={"fill-black/30"}
+              rx="2"
             />
             <rect
               x="0"
@@ -151,6 +153,7 @@ export const StatBarSegmented = ({
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               }}
               filter={fill > 0 ? `url(#glow-${index})` : 'none'}
+              rx="2"
             />
           </svg>
         ))}
