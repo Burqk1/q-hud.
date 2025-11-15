@@ -37,6 +37,9 @@ export const StatBar = ({
           style={{
             color: primaryColor,
             width: '1.25em',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           {value}
@@ -111,7 +114,10 @@ export const StatBarSegmented = ({
         className="text-xs 2k:text-sm 4k:text-base text-center font-bold"
         style={{
           color: primaryColor,
-          width: '1.25em'
+          width: '1.25em',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         {value}

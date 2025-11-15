@@ -33,6 +33,7 @@ export interface HudSettingsInterface {
   hungerThreshold: number; // 0-100
   thirstThreshold: number; // 0-100
   stressThreshold: number; // 0-100
+  useThresholds: boolean; // Enable/disable threshold system
   isSettingsOpen: boolean;
   isEditMode: boolean;
   playerStatusScale: number; // 50-200
@@ -78,6 +79,7 @@ const defaultSettings: HudSettingsInterface = {
   hungerThreshold: 50,
   thirstThreshold: 50,
   stressThreshold: 50,
+  useThresholds: true,
   isSettingsOpen: false,
   isEditMode: false,
   playerStatusScale: 100,

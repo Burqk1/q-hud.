@@ -232,7 +232,7 @@ const PlayerStatus = () => {
                 zIndex: 10,
               }}
             >
-              {settings.showHunger && playerState.hunger <= settings.hungerThreshold && (
+              {settings.showHunger && (!settings.useThresholds || playerState.hunger <= settings.hungerThreshold) && (
                 <StatBar
                   Icon={IoFastFood}
                   value={Math.round(smoothValues.hunger)}
@@ -240,7 +240,7 @@ const PlayerStatus = () => {
                   color={`var(--hunger-color)`}
                 />
               )}
-              {settings.showThirst && playerState.thirst <= settings.thirstThreshold && (
+              {settings.showThirst && (!settings.useThresholds || playerState.thirst <= settings.thirstThreshold) && (
                 <StatBar
                   Icon={FaBottleWater}
                   value={Math.round(smoothValues.thirst)}
@@ -250,7 +250,7 @@ const PlayerStatus = () => {
               )}
               {settings.showStress &&
                 typeof playerState.stress === "number" &&
-                playerState.stress >= settings.stressThreshold && (
+                (!settings.useThresholds || playerState.stress >= settings.stressThreshold) && (
                   <StatBar
                     Icon={FaBrain}
                     value={Math.round(smoothValues.stress)}

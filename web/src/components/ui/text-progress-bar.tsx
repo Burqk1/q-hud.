@@ -4,12 +4,14 @@ interface TextProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: number;
   label?: string;
   color?: string;
+  Icon?: React.ComponentType<{ className?: string; color?: string }>;
 }
 
 export const TextProgressBar = ({
   value = 50,
   label = "FUEL",
   color,
+  Icon,
   ...props
 }: TextProgressBarProps) => {
   const getColor = useMemo(() => {
@@ -27,13 +29,17 @@ export const TextProgressBar = ({
       }}
       {...props}
     >
-      <h1
-        className={
-          "uppercase 4k:text-2xl 2k:text-lg text-base font-geist font-bold"
-        }
-      >
-        {label}
-      </h1>
+      {Icon ? (
+        <Icon className="4k:text-2xl 2k:text-xl text-lg text-white" />
+      ) : (
+        <h1
+          className={
+            "uppercase 4k:text-2xl 2k:text-lg text-base font-geist font-bold"
+          }
+        >
+          {label}
+        </h1>
+      )}
 
       <div
         className="relative bg-black/30 shadow 4k:mt-1"

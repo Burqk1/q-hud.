@@ -189,7 +189,7 @@ const Speedometer: React.FC<SpeedometerProps> = React.memo(
             {engineHealth < 30 && (
               <div
                 className={
-                  "flex items-center justify-center *:text-xl 2k:text-2xl 4k:text-3xl mt-1s"
+                  "flex items-center justify-center *:text-xl 2k:text-2xl 4k:text-3xl mt-1"
                 }
               >
                 <PiEngineFill color="#fc5c58" />

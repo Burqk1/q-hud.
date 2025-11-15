@@ -37,6 +37,7 @@ function VehicleStatusThread:start()
 			local engineState = GetIsVehicleEngineRunning(vehicle)
 			local fuel = math.floor(fuelValue)
 			local gears = GetVehicleHighGear(vehicle)
+			local currentGear = GetVehicleCurrentGear(vehicle)
 			local odometer = functions.getVehicleOdometer(vehicle)
 
 			interface.message("setVehicleState", {
@@ -45,6 +46,7 @@ function VehicleStatusThread:start()
 				engineHealth = engineHealth,
 				engineState = engineState,
 				gears = gears,
+				currentGear = currentGear,
 				fuel = fuel,
 				odometer = odometer,
 			})

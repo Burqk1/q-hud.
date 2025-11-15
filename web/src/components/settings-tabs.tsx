@@ -6,7 +6,7 @@ import { BiSolidCarGarage, BiSolidShieldAlt2 } from "react-icons/bi";
 import { AiOutlineEye } from "react-icons/ai";
 import { BsSliders } from "react-icons/bs";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { IoFastFood } from "react-icons/io5";
+import { IoFastFood, IoChevronDown } from "react-icons/io5";
 import { TiHeartFullOutline } from "react-icons/ti";
 import { FaBottleWater, FaPersonRunning, FaBrain } from "react-icons/fa6";
 import { fetchNui } from "@/utils/fetchNui";
@@ -19,6 +19,7 @@ export default function SettingsTabs() {
   const [activeTab, setActiveTab] = useState<TabType>("general");
   const [selectedStatus, setSelectedStatus] = useState<"health" | "armor" | "hunger" | "thirst" | "stress" | "stamina">("health");
   const [selectedInterface, setSelectedInterface] = useState<"primary" | "secondary" | "carhud" | "compass">("primary");
+  const [isThresholdOpen, setIsThresholdOpen] = useState(false);
 
   const updateSetting = useCallback(
     <K extends keyof typeof settings>(key: K, value: typeof settings[K]) => {
@@ -58,7 +59,7 @@ export default function SettingsTabs() {
   }, []);
 
   const ToggleSwitch = ({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) => (
-    <label className="relative inline-flex items-center cursor-pointer">
+    <label className="relative inline-flex items-center cursor-pointer group">
       <input
         type="checkbox"
         checked={checked}
@@ -69,15 +70,20 @@ export default function SettingsTabs() {
         className="w-11 h-6 rounded-full peer-focus:outline-none relative overflow-hidden"
         style={{
           backgroundColor: checked ? 'var(--primary-color)' : 'rgba(0, 0, 0, 0.5)',
-          transition: 'background-color 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+          boxShadow: checked
+            ? '0 0 10px var(--primary-color), inset 0 1px 2px rgba(0,0,0,0.2)'
+            : 'inset 0 1px 2px rgba(0,0,0,0.3)',
+          transform: 'scale(1)',
+          transition: 'all 400ms cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         <div
-          className="absolute top-[2px] bg-white border-gray-300 border rounded-full h-5 w-5"
+          className="absolute top-[2px] bg-white rounded-full h-5 w-5"
           style={{
             left: '2px',
-            transform: checked ? 'translateX(20px)' : 'translateX(0)',
-            transition: 'transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+            transform: checked ? 'translateX(20px) scale(1.1)' : 'translateX(0) scale(1)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+            transition: 'all 400ms cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         />
       </div>
@@ -389,76 +395,119 @@ export default function SettingsTabs() {
 
         {activeTab === "visibility" && (
           <>
-            <div className="flex items-center justify-between p-3 bg-black/30 rounded-lg border border-white/5">
-              <div>
-                <p className="text-white font-semibold text-sm">Hunger Threshold</p>
-                <p className="text-white/50 text-xs">Show when below this value</p>
+            <div className="bg-black/30 rounded-lg border border-white/5">
+              <div className="flex items-center justify-between p-3 border-b border-white/5">
+                <div>
+                  <p className="text-white font-semibold text-sm">Use Status Thresholds</p>
+                  <p className="text-white/50 text-xs">Show status bars only when needed</p>
+                </div>
+                <ToggleSwitch
+                  checked={settings.useThresholds}
+                  onChange={(val) => updateSetting("useThresholds", val)}
+                />
               </div>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={settings.hungerThreshold}
-                onChange={(e) => {
-                  const val = Number(e.currentTarget.value);
-                  if (val >= 0 && val <= 100) {
-                    updateSetting("hungerThreshold", val);
-                  }
-                }}
-                className="w-16 px-2 py-1 bg-black/50 text-white text-center rounded-lg border border-white/10 focus:outline-none focus:border-white/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                style={{
-                  color: 'var(--primary-color)',
-                  fontWeight: 'bold'
-                }}
-              />
-            </div>
 
-            <div className="flex items-center justify-between p-3 bg-black/30 rounded-lg border border-white/5">
-              <div>
-                <p className="text-white font-semibold text-sm">Thirst Threshold</p>
-                <p className="text-white/50 text-xs">Show when below this value</p>
-              </div>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={settings.thirstThreshold}
-                onChange={(e) => {
-                  const val = Number(e.currentTarget.value);
-                  if (val >= 0 && val <= 100) {
-                    updateSetting("thirstThreshold", val);
-                  }
-                }}
-                className="w-16 px-2 py-1 bg-black/50 text-white text-center rounded-lg border border-white/10 focus:outline-none focus:border-white/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                style={{
-                  color: 'var(--primary-color)',
-                  fontWeight: 'bold'
-                }}
-              />
-            </div>
+              {settings.useThresholds && (
+                <>
+                  <button
+                    onClick={() => setIsThresholdOpen(!isThresholdOpen)}
+                    className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-all"
+                  >
+                    <div>
+                      <p className="text-white font-semibold text-sm">Threshold Settings</p>
+                      <p className="text-white/50 text-xs">Configure threshold values</p>
+                    </div>
+                    <IoChevronDown
+                      className="text-white/70 text-xl transition-transform duration-300"
+                      style={{
+                        transform: isThresholdOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                      }}
+                    />
+                  </button>
 
-            <div className="flex items-center justify-between p-3 bg-black/30 rounded-lg border border-white/5">
-              <div>
-                <p className="text-white font-semibold text-sm">Stress Threshold</p>
-                <p className="text-white/50 text-xs">Show when above this value</p>
-              </div>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={settings.stressThreshold}
-                onChange={(e) => {
-                  const val = Number(e.currentTarget.value);
-                  if (val >= 0 && val <= 100) {
-                    updateSetting("stressThreshold", val);
-                  }
-                }}
-                className="w-16 px-2 py-1 bg-black/50 text-white text-center rounded-lg border border-white/10 focus:outline-none focus:border-white/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                style={{
-                  color: 'var(--primary-color)',
-                  fontWeight: 'bold'
-                }}
-              />
+                  <div
+                    className="transition-all duration-300 ease-in-out overflow-hidden"
+                    style={{
+                      maxHeight: isThresholdOpen ? '500px' : '0px',
+                      opacity: isThresholdOpen ? 1 : 0,
+                    }}
+                  >
+                    <div className="flex flex-col gap-3 p-3">
+                  <div className="flex items-center justify-between p-3 bg-black/40 rounded-lg border border-white/5">
+                    <div>
+                      <p className="text-white font-semibold text-sm">Hunger Threshold</p>
+                      <p className="text-white/50 text-xs">Show when below this value</p>
+                    </div>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={settings.hungerThreshold}
+                      onChange={(e) => {
+                        const val = Number(e.currentTarget.value);
+                        if (val >= 0 && val <= 100) {
+                          updateSetting("hungerThreshold", val);
+                        }
+                      }}
+                      className="w-16 px-2 py-1 bg-black/50 text-white text-center rounded-lg border border-white/10 focus:outline-none focus:border-white/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      style={{
+                        color: 'var(--primary-color)',
+                        fontWeight: 'bold'
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-black/40 rounded-lg border border-white/5">
+                    <div>
+                      <p className="text-white font-semibold text-sm">Thirst Threshold</p>
+                      <p className="text-white/50 text-xs">Show when below this value</p>
+                    </div>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={settings.thirstThreshold}
+                      onChange={(e) => {
+                        const val = Number(e.currentTarget.value);
+                        if (val >= 0 && val <= 100) {
+                          updateSetting("thirstThreshold", val);
+                        }
+                      }}
+                      className="w-16 px-2 py-1 bg-black/50 text-white text-center rounded-lg border border-white/10 focus:outline-none focus:border-white/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      style={{
+                        color: 'var(--primary-color)',
+                        fontWeight: 'bold'
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-black/40 rounded-lg border border-white/5">
+                    <div>
+                      <p className="text-white font-semibold text-sm">Stress Threshold</p>
+                      <p className="text-white/50 text-xs">Show when above this value</p>
+                    </div>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={settings.stressThreshold}
+                      onChange={(e) => {
+                        const val = Number(e.currentTarget.value);
+                        if (val >= 0 && val <= 100) {
+                          updateSetting("stressThreshold", val);
+                        }
+                      }}
+                      className="w-16 px-2 py-1 bg-black/50 text-white text-center rounded-lg border border-white/10 focus:outline-none focus:border-white/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      style={{
+                        color: 'var(--primary-color)',
+                        fontWeight: 'bold'
+                      }}
+                    />
+                  </div>
+                </div>
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="border-t border-white/10 pt-3 mt-2">
