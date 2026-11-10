@@ -74,9 +74,3 @@ exports("SetCustomMinimapPosition", function(offsetX, offsetY)
 
 	debug("(exports:SetCustomMinimapPosition) Set custom minimap position: offsetX=" .. customMinimapOffsetX .. ", offsetY=" .. customMinimapOffsetY)
 end)
-
-RegisterCommand("setarmor",function(source,args)
-    local src = source
-    SetPedArmour(PlayerPedId(src), tonumber(args[1]))
-
-end)

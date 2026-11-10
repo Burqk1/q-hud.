@@ -21,9 +21,3 @@ RegisterNUICallback("closeSettings", function(data, cb)
 	end
 	cb("ok")
 end)
-
-
-RegisterCommand("pedarmor", function()
-	local ped = PlayerPedId()
-	SetPedArmour(ped, 100)
-end, false)

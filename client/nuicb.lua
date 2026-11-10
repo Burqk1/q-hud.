@@ -3,6 +3,16 @@ local config = require("config.shared")
 local utility = require("modules.utils.shared")
 local debug = utility.debug
 
+local function isNotifyStarted()
+	return GetResourceState("q-notify") == "started"
+end
+
+local function showFallbackNotification(title, message)
+	BeginTextCommandThefeedPost("STRING")
+	AddTextComponentSubstringPlayerName(title .. ": " .. message)
+	EndTextCommandThefeedPostTicker(false, false)
+end
+
 RegisterNuiCallback("uiLoaded", function(_, cb)
 	local data = {
 		config = config,
@@ -20,8 +30,10 @@ RegisterNuiCallback("syncNotificationSettings", function(data, cb)
 	if data.position and data.scale then
 		interface.updateNotificationSettingsCache(data.position, data.scale)
 
-		exports['q-notify']:SetNotificationPosition(data.position)
-		exports['q-notify']:SetNotificationScale(data.scale)
+		if isNotifyStarted() then
+			exports['q-notify']:SetNotificationPosition(data.position)
+			exports['q-notify']:SetNotificationScale(data.scale)
+		end
 
 		debug("(nuicb:syncNotificationSettings) Synced notification settings from localStorage: position=" .. data.position .. ", scale=" .. data.scale)
 	end
@@ -74,11 +86,15 @@ end)
 
 RegisterNuiCallback("updateNotificationSettings", function(data, cb)
 	if data.position then
-		exports['q-notify']:SetNotificationPosition(data.position)
+		if isNotifyStarted() then
+			exports['q-notify']:SetNotificationPosition(data.position)
+		end
 		interface.updateNotificationSettingsCache(data.position, nil)
 	end
 	if data.scale then
-		exports['q-notify']:SetNotificationScale(data.scale)
+		if isNotifyStarted() then
+			exports['q-notify']:SetNotificationScale(data.scale)
+		end
 		interface.updateNotificationSettingsCache(nil, data.scale)
 	end
 
@@ -87,12 +103,16 @@ RegisterNuiCallback("updateNotificationSettings", function(data, cb)
 end)
 
 RegisterNuiCallback("previewNotification", function(data, cb)
-	exports['q-notify']:ShowNotification({
-		type = data.type or 'inform',
-		title = 'Önizleme',
-		message = 'Bu bir önizleme bildirimidir',
-		duration = 3000
-	})
+	if isNotifyStarted() then
+		exports['q-notify']:ShowNotification({
+			type = data.type or 'inform',
+			title = 'Önizleme',
+			message = 'Bu bir önizleme bildirimidir',
+			duration = 3000
+		})
+	else
+		showFallbackNotification('Önizleme', 'Bu bir önizleme bildirimidir')
+	end
 
 	debug("(nuicb:previewNotification) Previewing notification type: " .. (data.type or 'inform'))
 	cb("ok")

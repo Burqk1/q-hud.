@@ -40,7 +40,7 @@ The vanilla vehicle name, area name, vehicle class and street name HUD component
 |---|---|
 | `ox_lib` | Loaded as a shared script. Used for `lib.callback` and `lib.onCache`; without it the odometer is disabled. |
 | `oxmysql` | Server-side odometer reads/writes. |
-| `q-notify` | The settings menu calls `exports['q-notify']` (`SetNotificationPosition`, `SetNotificationScale`, `ShowNotification`). These calls are not guarded, so the resource must be running. It is not part of this repository. |
+| `q-notify` (optional) | The settings menu calls `exports['q-notify']` (`SetNotificationPosition`, `SetNotificationScale`, `ShowNotification`) only while `q-notify` is started. Without it, position and scale are still saved in the HUD settings but not applied anywhere, and the preview button shows a native GTA feed notification instead. It is not part of this repository. |
 | A framework (optional) | `qb-core`, ESX (`esx_status`), or ox (`ox:statusTick`) for hunger/thirst/stress. |
 | `pma-voice` (optional) | Talking range and radio indicator events. |
 
@@ -48,14 +48,14 @@ The vanilla vehicle name, area name, vehicle class and street name HUD component
 
 1. Build the interface (see [Building the UI](#building-the-ui)) or use a release zip. Pushing a `v*.*.*` tag runs `.github/workflows/build-prod.yml`, which builds the UI with Bun and attaches `q-hud.zip` (already containing `dist/`) to a GitHub release.
 2. Copy the folder into your server's `resources` directory. **The folder must be named `q-hud`**, because the code calls `exports['q-hud']` on itself.
-3. Add the database column used by the odometer (see below).
+3. Add the database column used by the odometer (see below, or run `sql/mileage.sql`).
 4. In `server.cfg`, start the dependencies first:
 
    ```cfg
    ensure ox_lib
    ensure oxmysql
    ensure qb-core      # or your framework
-   ensure q-notify
+   ensure q-notify     # optional
    ensure q-hud
    ```
 
@@ -68,7 +68,7 @@ SELECT mileage FROM player_vehicles WHERE plate = ?
 UPDATE player_vehicles SET mileage = ? WHERE plate = ?
 ```
 
-No SQL file ships with the resource, and stock QBCore does not have this column. Add it yourself if it is missing, for example:
+Stock QBCore does not have this column. If it is missing, run the optional `sql/mileage.sql`, which contains:
 
 ```sql
 ALTER TABLE player_vehicles ADD COLUMN mileage FLOAT NOT NULL DEFAULT 0;
@@ -123,10 +123,6 @@ The ammo counter picks its source at start:
 | `/togglehud` | - | Show or hide the HUD |
 | `/hudsettings` | - | Open the settings menu |
 | `/toggleSeatbelt` | `B` | Toggle the seatbelt (only with `useBuiltInSeatbeltLogic = true`, not on bikes) |
-| `/pedarmor` | - | Sets your armor to 100 |
-| `/setarmor <value>` | - | Sets your armor to the given value |
-
-`/pedarmor` and `/setarmor` are client-side commands with no permission check. They look like test commands, so remove them from `client/commands.lua` and `client/main.lua` before running the resource on a live server.
 
 ## Exports
 
